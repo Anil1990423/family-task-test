@@ -23,6 +23,5 @@ namespace DataLayer
             return base.Reset();
         }
 
-       
     }
 }

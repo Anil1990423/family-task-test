@@ -18,7 +18,7 @@ namespace Services
         private readonly IMemberRepository _memberRepository;
         private readonly IMapper _mapper;
 
-        public MemberService(IMapper mapper, IMemberRepository memberRepository)
+        public MemberService(IMapper mapper, IMemberRepository memberRepository )
         {
             _mapper = mapper;
             _memberRepository = memberRepository;
@@ -36,7 +36,7 @@ namespace Services
                 Payload = vm
             };
         }
-        
+
         public async Task<UpdateMemberCommandResult> UpdateMemberCommandHandler(UpdateMemberCommand command)
         {
             var isSucceed = true;
@@ -56,16 +56,26 @@ namespace Services
 
         public async Task<GetAllMembersQueryResult> GetAllMembersQueryHandler()
         {
-            IEnumerable<MemberVm> vm = new List<MemberVm>();
+            try
+            {
+                IEnumerable<MemberVm> vm = new List<MemberVm>();
 
-            var members = await _memberRepository.Reset().ToListAsync();
+                var members = await _memberRepository.Reset().ToListAsync();
 
-            if (members != null && members.Any())
-                vm = _mapper.Map<IEnumerable<MemberVm>>(members);
+                if (members != null && members.Any())
+                    vm = _mapper.Map<IEnumerable<MemberVm>>(members);
 
-            return new GetAllMembersQueryResult() { 
-                Payload = vm
-            };
+                return new GetAllMembersQueryResult()
+                {
+                    Payload = vm
+                };
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
         }
 
     }

@@ -24,6 +24,18 @@ namespace Core.Extensions.ModelConversion
             return command;
         }
 
+        public static CreateTaskCommand ToCreateTaskCommand(this TaskVm model)
+        {
+            var command = new CreateTaskCommand()
+            {
+                Subject = model.Subject,
+                IsComplete = model.IsComplete,
+                AssignedToId = model.AssignedToId
+            };
+            return command;
+        }
+
+
         public static MenuItem[] ToMenuItems(this IEnumerable<MemberVm> models)
         {
             return models.Select(m => new MenuItem()
@@ -45,6 +57,29 @@ namespace Core.Extensions.ModelConversion
                 Roles = model.Roles,
                 Avatar = model.Avatar,
                 Email = model.Email
+            };
+            return command;
+        }
+
+        public static UpdateTaskCommand ToUpdateTaskCommand(this TaskVm model)
+        {
+            var command = new UpdateTaskCommand()
+            {
+                Id = model.Id,
+                IsComplete = model.IsComplete,
+                AssignedToId = model.AssignedToId,
+                Subject = model.Subject
+            };
+            return command;
+        }
+        public static DeleteTaskCommand ToDeleteTaskCommand(this TaskVm model)
+        {
+            var command = new DeleteTaskCommand()
+            {
+                Id = model.Id,
+                IsComplete = model.IsComplete,
+                AssignedToId = model.AssignedToId,
+                Subject = model.Subject
             };
             return command;
         }

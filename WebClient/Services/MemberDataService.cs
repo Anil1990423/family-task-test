@@ -33,6 +33,7 @@ namespace WebClient.Services
         public event EventHandler<string> UpdateMemberFailed;
         public event EventHandler<string> CreateMemberFailed;
         public event EventHandler SelectedMemberChanged;
+        public event EventHandler ShowAllTasks;
 
         private async void LoadMembers()
         {
@@ -109,6 +110,11 @@ namespace WebClient.Services
         {
             SelectedMember = null;
             SelectedMemberChanged?.Invoke(this, null);
+        }
+
+        public void LoadAllTasksByBtnClick()
+        {
+            ShowAllTasks?.Invoke(this, null);
         }
     }
 }

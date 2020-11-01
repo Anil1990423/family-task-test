@@ -16,26 +16,32 @@
         font-size: 24px;
         font-family: "Poppins Light";
     }
+
     .done-text {
         text-decoration: line-through;
     }
+
     .task-wrapper .avtar {
         width: 32px;
         height: 32px;
         border-radius: 50%;
     }
-    @@media(max-width: 1400px) { 
-        .task-wrapper .task-item { 
+
+    @@media(max-width: 1400px) {
+        .task-wrapper .task-item {
             font-size: 16px;
         }
+
         .task-wrapper .avtar {
             width: 24px;
             height: 24px;
         }
+
         .delete-icon {
             width: 25px;
         }
     }
+
     @@media(max-width: 767.98px) {
         .task-wrapper .avtar {
             width: 16px;
@@ -49,33 +55,35 @@
     {
         <div class="task-item p-3 my-3 row m-0">
             <div class="col-10 p-0">
-                <Check TValue="bool" Checked="@item.IsDone" CheckedChanged="@(val => ToggleTask(item))">
-                    <span class="@(item.IsDone ? "done-text" : "")">@item.Text</span>
+                <Check TValue="bool" Checked="@item.IsComplete" CheckedChanged="@(val => ToggleTask(item))">
+                    <span class="@(item.IsComplete ? "done-text" : "")">@item.Subject</span>
                 </Check>
             </div>
             <div class="col-2 p-0 d-flex justify-content-end align-items-center">
-                @if (item.Member != null) {
+                @if (item.AssignedToId != null && selectedMember != null)
+                {
                     <div class="avtar mr-1" style="background-color: @selectedMember.Avatar;"></div>
                 }
-                <img class="delete-icon" src="/assets/images/delete-icon.svg"/>
+                <img class="delete-icon" src="/assets/images/delete-icon.svg" @onclick="@(val => DeleteTask(@item.Id))" />
             </div>
         </div>
     }
 </div>
 
 @code  {
-    private List<TaskModel> tasks = new List<TaskModel>();
+    private List<TaskVm> tasks = new List<TaskVm>();
     private MemberVm selectedMember;
-
     protected override Task OnInitializedAsync()
     {
         memberService.SelectedMemberChanged += MemberServiceOnSelectedMemberChanged;
+        memberService.ShowAllTasks += ShowAllTasks;
+
         taskService.TasksUpdated += TaskServiceOnTasksUpdated;
         LoadCurrentTasks();
         return base.OnInitializedAsync();
     }
 
-    private void ToggleTask(TaskModel model)
+    private void ToggleTask(TaskVm model)
     {
         taskService.ToggleTask(model.Id);
         StateHasChanged();
@@ -91,19 +99,35 @@
         LoadCurrentTasks();
     }
 
+    private void ShowAllTasks(object sender, EventArgs e)
+    {
+        tasks = taskService.Tasks.ToList();
+        selectedMember = null;
+         StateHasChanged();
+    }
+
     private void LoadCurrentTasks()
     {
         selectedMember = memberService.SelectedMember;
-
-        if (selectedMember == null || selectedMember.Id == Guid.Empty)
-        {
-            tasks = taskService.Tasks;
-            StateHasChanged();
-            return;
-        };
-
-        tasks = taskService.Tasks.Where(t => t.Member == selectedMember.Id).ToList();
+        tasks = null;
+            if (selectedMember == null || selectedMember.Id == Guid.Empty)
+            {
+                tasks = taskService.Tasks.ToList();
+            }
+            else
+            {
+                tasks = taskService.Tasks.Where(t => t.AssignedToId == selectedMember.Id).ToList();
+            }
         StateHasChanged();
     }
 
+    private void DeleteTask(Guid id)
+    {
+        TaskVm t = new TaskVm()
+        {
+            Id = id
+        };
+        taskService.DeleteTask(t);
+        StateHasChanged();
+    }
 }

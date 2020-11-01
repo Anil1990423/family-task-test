@@ -15,6 +15,7 @@ namespace WebClient.Abstractions
 
         event EventHandler MembersChanged;
         event EventHandler SelectedMemberChanged;
+        event EventHandler ShowAllTasks;
         event EventHandler<string> UpdateMemberFailed;
         event EventHandler<string> CreateMemberFailed;
 
@@ -23,6 +24,7 @@ namespace WebClient.Abstractions
         Task CreateMember(MemberVm model);
         void SelectMember(Guid id);
         void SelectNullMember();
+        void LoadAllTasksByBtnClick();
 
     }
 }

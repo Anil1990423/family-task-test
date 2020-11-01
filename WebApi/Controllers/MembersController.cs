@@ -16,7 +16,6 @@ namespace WebApi.Controllers
     public class MembersController : ControllerBase
     {
         private readonly IMemberService _memberService;
-
         public MembersController(IMemberService memberService)
         {
             _memberService = memberService;
